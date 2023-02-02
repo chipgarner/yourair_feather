@@ -106,7 +106,7 @@ void setup_oled_display() {
   display.display();
   delay(2000);
 
-  display.setTextSize(4);
+  display.setTextSize(3);
   display.setTextColor(SSD1306_WHITE);
   display.setCursor(0,0);
   // Clear the buffer.
@@ -114,6 +114,42 @@ void setup_oled_display() {
   display.display();
 }
 
+float aqipm25(float p)           //calculating AQI of particulate matter PM2.5
+{
+	float c;
+	if(p>=0.0&&p<=12.0)
+	{
+		c=(4.166*(p-0.0))+0;
+		return c;
+	}
+	else if(p>=12.1&&p<=35.4)
+	{
+		c=(2.103*(p-12.1))+51;
+		return c;	
+	}
+	else if(p>=35.5&&p<=55.4)
+	{
+		c=(2.462*(p-35.5))+101;
+		return c;	
+	}
+	else if(p>=55.5&&p<=150.4)
+	{
+		c=(0.516*(p-55.5))+151;;
+		return c;
+	}
+	else if(p>=150.5&&p<=250.4)
+	{
+		c=(0.990*(p-150.5))+201;
+		return c;
+	}
+	else if(p>=250.5&&p<=500.4)
+	{
+		c=(0.796*(p-250.5))+301;
+		return c;	
+	}
+}
+
+int aqi25;
 
 void loop() {
 
@@ -124,10 +160,14 @@ void loop() {
     delay(500);  // try again in a bit!
   }
   Serial.println("AQI reading success");
+
+  aqi25 = round(aqipm25(data.pm25_env));
   
   display.clearDisplay();
-  display.setCursor(40,0);
+  display.setCursor(00,0);
   display.print(data.pm25_env);
+  display.setCursor(70,0);
+  display.print(aqi25);
   display.display();
 
   Serial.println();
@@ -141,6 +181,7 @@ void loop() {
   Serial.println(F("---------------------------------------"));
   Serial.print(F("PM 1.0: ")); Serial.print(data.pm10_env);
   Serial.print(F("\t\tPM 2.5: ")); Serial.print(data.pm25_env);
+  Serial.print(F("\t\tAQI 2.5: ")); Serial.print(aqi25);
   Serial.print(F("\t\tPM 10: ")); Serial.println(data.pm100_env);
   Serial.println(F("---------------------------------------"));
   Serial.print(F("Particles > 0.3um / 0.1L air:")); Serial.println(data.particles_03um);
