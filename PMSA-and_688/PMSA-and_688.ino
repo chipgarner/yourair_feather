@@ -101,7 +101,7 @@ void setup() {
     bme.setHumidityOversampling(BME680_OS_2X);
     bme.setPressureOversampling(BME680_OS_4X);
     bme.setIIRFilterSize(BME680_FILTER_SIZE_3);
-    bme.setGasHeater(320, 0); // 0 is off. e.g. 320*C for 150 ms
+    bme.setGasHeater(0, 0); // 0, 0 is off. e.g. 320*C for 150 ms
 
     Serial.println(F("BME68x running!"));
   }
@@ -186,12 +186,12 @@ void loop() {
   display.print("Humidity: ");
   display.print(bme.humidity);
   display.println("%");
-  display.print("Altitude: ");
-  display.print(bme.readAltitude(SEALEVELPRESSURE_HPA));
-  display.println(" m");
+  display.print("Pressure: ");
+  display.print(bme.readPressure() / 100);
+  display.println(" mb");
   display.print("Temperature: ");
-  display.print(bme.temperature);
-  display.print(" C");
+  display.print(bme.temperature * 9 / 5 + 32);
+  display.print(" F");
   display.display();
 
   Serial.println();
